@@ -35,5 +35,6 @@ const noteSchema: Schema = new Schema<INote>({
         type: Schema.Types.ObjectId, required: true
     },
 });
-const note = mongoose.model('Note', noteSchema);
-export default note;
+
+const Note = mongoose.model('Note', noteSchema);
+export default Note;
