@@ -8,7 +8,6 @@ interface IUser {
   password: string;
 }
 
-
 const userSchema = new Schema<IUser>({
     email:{
         type: String,
