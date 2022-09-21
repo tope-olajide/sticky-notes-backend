@@ -14,6 +14,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  NoteData: { // input type
+    color: string; // String!
+    content: string; // String!
+  }
   SignInUserInput: { // input type
     password: string; // String!
     usernameOrEmail: string; // String!
@@ -43,6 +47,13 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: {};
+  Note: { // root type
+    color: string; // String!
+    content: string; // String!
+    id: string; // ID!
+    isSaved?: boolean | null; // Boolean
+    userId: string; // ID!
+  }
   Query: {};
   User: { // root type
     _id: string; // ID!
@@ -69,12 +80,23 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    deleteNote: NexusGenRootTypes['Note']; // Note!
+    modifyNote: NexusGenRootTypes['Note']; // Note!
+    newNote: NexusGenRootTypes['Note']; // Note!
     signinUser: NexusGenRootTypes['AuthPayLoad']; // AuthPayLoad!
     signoutUser: boolean; // Boolean!
     signupUser: NexusGenRootTypes['AuthPayLoad']; // AuthPayLoad!
   }
+  Note: { // field return type
+    color: string; // String!
+    content: string; // String!
+    id: string; // ID!
+    isSaved: boolean | null; // Boolean
+    userId: string; // ID!
+  }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    allNotes: Array<NexusGenRootTypes['Note'] | null>; // [Note]!
+    singleNote: NexusGenRootTypes['Note']; // Note!
   }
   User: { // field return type
     _id: string; // ID!
@@ -91,12 +113,23 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Mutation: { // field return type name
+    deleteNote: 'Note'
+    modifyNote: 'Note'
+    newNote: 'Note'
     signinUser: 'AuthPayLoad'
     signoutUser: 'Boolean'
     signupUser: 'AuthPayLoad'
   }
+  Note: { // field return type name
+    color: 'String'
+    content: 'String'
+    id: 'ID'
+    isSaved: 'Boolean'
+    userId: 'ID'
+  }
   Query: { // field return type name
-    ok: 'Boolean'
+    allNotes: 'Note'
+    singleNote: 'Note'
   }
   User: { // field return type name
     _id: 'ID'
@@ -109,11 +142,26 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    deleteNote: { // args
+      noteId?: string | null; // ID
+    }
+    modifyNote: { // args
+      data: NexusGenInputs['NoteData']; // NoteData!
+      noteId: string; // String!
+    }
+    newNote: { // args
+      data: NexusGenInputs['NoteData']; // NoteData!
+    }
     signinUser: { // args
       data: NexusGenInputs['SignInUserInput']; // SignInUserInput!
     }
     signupUser: { // args
       data: NexusGenInputs['SignupUserInput']; // SignupUserInput!
+    }
+  }
+  Query: {
+    singleNote: { // args
+      noteId?: string | null; // String
     }
   }
 }

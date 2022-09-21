@@ -8,13 +8,30 @@ type AuthPayLoad {
 }
 
 type Mutation {
+  deleteNote(noteId: ID): Note!
+  modifyNote(data: NoteData!, noteId: String!): Note!
+  newNote(data: NoteData!): Note!
   signinUser(data: SignInUserInput!): AuthPayLoad!
   signoutUser: Boolean!
   signupUser(data: SignupUserInput!): AuthPayLoad!
 }
 
+type Note {
+  color: String!
+  content: String!
+  id: ID!
+  isSaved: Boolean
+  userId: ID!
+}
+
+input NoteData {
+  color: String!
+  content: String!
+}
+
 type Query {
-  ok: Boolean!
+  allNotes: [Note]!
+  singleNote(noteId: String): Note!
 }
 
 input SignInUserInput {
