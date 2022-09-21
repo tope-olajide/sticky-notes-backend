@@ -2,6 +2,37 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayLoad {
+  token: String!
+  user: User!
+}
+
+type Mutation {
+  signinUser(data: SignInUserInput!): AuthPayLoad!
+  signoutUser: Boolean!
+  signupUser(data: SignupUserInput!): AuthPayLoad!
+}
+
 type Query {
   ok: Boolean!
+}
+
+input SignInUserInput {
+  password: String!
+  usernameOrEmail: String!
+}
+
+input SignupUserInput {
+  email: String!
+  fullname: String!
+  password: String!
+  username: String!
+}
+
+type User {
+  _id: ID!
+  email: String!
+  fullname: String!
+  password: String!
+  username: String!
 }

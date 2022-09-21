@@ -14,6 +14,16 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  SignInUserInput: { // input type
+    password: string; // String!
+    usernameOrEmail: string; // String!
+  }
+  SignupUserInput: { // input type
+    email: string; // String!
+    fullname: string; // String!
+    password: string; // String!
+    username: string; // String!
+  }
 }
 
 export interface NexusGenEnums {
@@ -28,7 +38,19 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  AuthPayLoad: { // root type
+    token: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  Mutation: {};
   Query: {};
+  User: { // root type
+    _id: string; // ID!
+    email: string; // String!
+    fullname: string; // String!
+    password: string; // String!
+    username: string; // String!
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -42,18 +64,58 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AuthPayLoad: { // field return type
+    token: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  Mutation: { // field return type
+    signinUser: NexusGenRootTypes['AuthPayLoad']; // AuthPayLoad!
+    signoutUser: boolean; // Boolean!
+    signupUser: NexusGenRootTypes['AuthPayLoad']; // AuthPayLoad!
+  }
   Query: { // field return type
     ok: boolean; // Boolean!
+  }
+  User: { // field return type
+    _id: string; // ID!
+    email: string; // String!
+    fullname: string; // String!
+    password: string; // String!
+    username: string; // String!
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  AuthPayLoad: { // field return type name
+    token: 'String'
+    user: 'User'
+  }
+  Mutation: { // field return type name
+    signinUser: 'AuthPayLoad'
+    signoutUser: 'Boolean'
+    signupUser: 'AuthPayLoad'
+  }
   Query: { // field return type name
     ok: 'Boolean'
+  }
+  User: { // field return type name
+    _id: 'ID'
+    email: 'String'
+    fullname: 'String'
+    password: 'String'
+    username: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    signinUser: { // args
+      data: NexusGenInputs['SignInUserInput']; // SignInUserInput!
+    }
+    signupUser: { // args
+      data: NexusGenInputs['SignupUserInput']; // SignupUserInput!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -64,7 +126,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = never;
 
