@@ -8,7 +8,6 @@ const Note = objectType({
         t.string("id");
         t.nonNull.string("content");
         t.nonNull.string("color");
-        t.nonNull.boolean("isSaved")
         t.nonNull.string("userId");
     },
 });
@@ -16,7 +15,6 @@ const NoteData = inputObjectType({
     name: "NoteData",
     definition(t) {
         t.nonNull.string("content");
-        t.boolean("isSaved")
         t.nonNull.string("color");
     },
 });
@@ -94,7 +92,7 @@ export const NewNote = extendType({
                         throw new AuthenticationError("You are not authenticated")
                     }
                     const createdNoted = await noteModel.create({
-                        content: data.content, color: data.color || 'yellow', userId: user.id, isSaved: true
+                        content: data.content, color: data.color || 'yellow', userId: user.id
                     });
                     return createdNoted;
                 } catch (error) {

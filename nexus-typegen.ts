@@ -17,7 +17,6 @@ export interface NexusGenInputs {
   NoteData: { // input type
     color: string; // String!
     content: string; // String!
-    isSaved?: boolean | null; // Boolean
   }
   SignInUserInput: { // input type
     password: string; // String!
@@ -52,7 +51,6 @@ export interface NexusGenObjects {
     color: string; // String!
     content: string; // String!
     id?: string | null; // String
-    isSaved: boolean; // Boolean!
     userId: string; // String!
   }
   Query: {};
@@ -92,7 +90,6 @@ export interface NexusGenFieldTypes {
     color: string; // String!
     content: string; // String!
     id: string | null; // String
-    isSaved: boolean; // Boolean!
     userId: string; // String!
   }
   Query: { // field return type
@@ -125,7 +122,6 @@ export interface NexusGenFieldTypeNames {
     color: 'String'
     content: 'String'
     id: 'String'
-    isSaved: 'Boolean'
     userId: 'String'
   }
   Query: { // field return type name

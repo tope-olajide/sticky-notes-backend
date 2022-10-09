@@ -14,8 +14,7 @@ enum Theme {
 
 interface INote {
     content: string;
-    color: string;
-    isSaved: boolean;
+    color: Theme;
     userId: string;
 }
 
@@ -28,10 +27,7 @@ const noteSchema = new Schema<INote>({
     color: {
         type: String,
         enum: ['yellow', 'green', 'pink', 'purple', 'blue', 'gray', 'charcoal'],
-        default: 'yellow'
-    },
-    isSaved: {
-        type: Boolean
+        default: Theme.Yellow
     },
     userId: {
         type: String, required: true

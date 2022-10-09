@@ -20,14 +20,12 @@ type Note {
   color: String!
   content: String!
   id: String
-  isSaved: Boolean!
   userId: String!
 }
 
 input NoteData {
   color: String!
   content: String!
-  isSaved: Boolean
 }
 
 type Query {
