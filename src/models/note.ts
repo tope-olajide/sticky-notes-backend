@@ -1,6 +1,6 @@
 
 
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
 enum Theme {
     Yellow = "yellow",
@@ -11,14 +11,16 @@ enum Theme {
     Gray = "gray",
     Charcoal = "charcoal"
 }
+
 interface INote {
     content: string;
-    color: Theme;
+    color: string;
     isSaved: boolean;
-    userId: Schema.Types.ObjectId;
-  }
+    userId: string;
+}
 
-const noteSchema: Schema = new Schema<INote>({
+const noteSchema = new Schema<INote>({
+
     content: {
         type: String,
         required: true
@@ -26,15 +28,15 @@ const noteSchema: Schema = new Schema<INote>({
     color: {
         type: String,
         enum: ['yellow', 'green', 'pink', 'purple', 'blue', 'gray', 'charcoal'],
-        default: Theme.Yellow
+        default: 'yellow'
     },
-    isSaved:{
-        type:Boolean
+    isSaved: {
+        type: Boolean
     },
     userId: {
-        type: Schema.Types.ObjectId, required: true
+        type: String, required: true
     },
 });
 
-const Note = mongoose.model('Note', noteSchema);
+const Note = model<INote>('Note', noteSchema);
 export default Note;

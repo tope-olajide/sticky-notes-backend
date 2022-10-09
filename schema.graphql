@@ -8,7 +8,7 @@ type AuthPayLoad {
 }
 
 type Mutation {
-  deleteNote(noteId: ID): Note!
+  deleteNote(noteId: String!): Note!
   modifyNote(data: NoteData!, noteId: String!): Note!
   newNote(data: NoteData!): Note!
   signinUser(data: SignInUserInput!): AuthPayLoad!
@@ -19,14 +19,15 @@ type Mutation {
 type Note {
   color: String!
   content: String!
-  id: ID!
-  isSaved: Boolean
-  userId: ID!
+  id: String
+  isSaved: Boolean!
+  userId: String!
 }
 
 input NoteData {
   color: String!
   content: String!
+  isSaved: Boolean
 }
 
 type Query {
@@ -47,9 +48,9 @@ input SignupUserInput {
 }
 
 type User {
-  _id: ID!
   email: String!
   fullname: String!
+  id: String!
   password: String!
   username: String!
 }
