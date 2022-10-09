@@ -5,13 +5,6 @@ import validator from 'validator';
 import { extendType, objectType, inputObjectType, nonNull } from "nexus";
 import userModel from "../models/user";
 
-interface IUser {
-  user: {
-    id: string
-  },
-  id: string
-}
-
  const User = objectType({
     name: "User", 
     definition(t) {

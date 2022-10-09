@@ -1,6 +1,7 @@
 import express, { Response } from "express";
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer, AuthenticationError } from 'apollo-server-core';
+import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 import http from 'http';
 import { schema } from "./schema";
 import mongoose from 'mongoose';
@@ -28,7 +29,7 @@ async function startApolloServer() {
   app.use(cookieParser());
 
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL!,
     credentials: true,
   };
 
@@ -37,6 +38,7 @@ async function startApolloServer() {
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    cache: new InMemoryLRUCache(),
     context: ({ req, res }) => {
       if (req) {
         console.log(req.cookies)
@@ -57,17 +59,21 @@ async function startApolloServer() {
 
 
   await server.start();
-  server.applyMiddleware({ app, path: '/graphql', cors: false });
+  server.applyMiddleware({ app, cors: false });
   const port = process.env.PORT || 4000;
   await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at http://localhost:${port + server.graphqlPath}`);
+
 }
-
-startApolloServer()
-
-async function main() {
+async function connectToMongoDB() {
   await mongoose.connect(process.env.DATABASE_URL!);
   console.log("Connected to mongo atlas successfully...");
 }
 
-main().catch(err => console.log(err));
+startApolloServer();
+connectToMongoDB().catch(err => console.log(err));
+
+
+
+
+
