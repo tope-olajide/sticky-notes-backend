@@ -5,17 +5,18 @@ import { AuthenticationError } from "apollo-server-express";
 const Note = objectType({
     name: "Note",
     definition(t) {
-        t.nonNull.id("id");
+        t.string("id");
         t.nonNull.string("content");
         t.nonNull.string("color");
-        t.boolean("isSaved")
-        t.nonNull.id("userId");
+        t.nonNull.boolean("isSaved")
+        t.nonNull.string("userId");
     },
 });
 const NoteData = inputObjectType({
     name: "NoteData",
     definition(t) {
         t.nonNull.string("content");
+        t.boolean("isSaved")
         t.nonNull.string("color");
     },
 });
@@ -64,6 +65,9 @@ export const SingleNote = extendType({
                 }
                 try {
                     const noteDetails = await noteModel.findOne({ _id: noteId });
+                    if(!noteDetails){
+                        throw new Error("Note not found");
+                    }
                     return noteDetails;
                 } catch (error) {
                     throw error;
@@ -87,7 +91,7 @@ export const NewNote = extendType({
                 const { user } = context;
                 try {
                     if (!user) {
-                        throw new AuthenticationError("Your session has expired. Please Login Again!")
+                        throw new AuthenticationError("You are not authenticated")
                     }
                     const createdNoted = await noteModel.create({
                         content: data.content, color: data.color || 'yellow', userId: user.id, isSaved: true
@@ -121,12 +125,15 @@ export const ModifyNote = extendType({
                         {
                             _id: noteId, userId: user.id,
                         },
-                        { content, color: color || "blue" },
+                        { content, color },
                         {
                             runValidators: true,
                             new: true,
                         }
                     );
+                    if (!modifiedNote) {
+                        throw new Error("Unable to update note");
+                    }
                     console.log(modifiedNote)
                     return modifiedNote;
                 } catch (error) {
@@ -143,7 +150,7 @@ export const DeleteNote = extendType({
         t.nonNull.field('deleteNote', {
             type: Note,
             args: {
-                noteId: 'ID'
+                noteId: nonNull('String')
             },
             async resolve(_parent, args, context, _info) {
                 const { noteId } = args;

@@ -5,10 +5,17 @@ import validator from 'validator';
 import { extendType, objectType, inputObjectType, nonNull } from "nexus";
 import userModel from "../models/user";
 
+interface IUser {
+  user: {
+    id: string
+  },
+  id: string
+}
+
  const User = objectType({
     name: "User", 
     definition(t) {
-      t.nonNull.id("_id");
+      t.nonNull.string("id");
       t.nonNull.string("email");
       t.nonNull.string("username");
       t.nonNull.string("password");
@@ -83,6 +90,7 @@ import userModel from "../models/user";
               throw new AuthenticationError("Email is already in use!");
             }
             const createdUser = await userModel.create(userData);
+            console.log(createdUser)
             const token = jsonwebtoken.sign(
               {
                 id: createdUser._id,
@@ -95,7 +103,7 @@ import userModel from "../models/user";
                .cookie("access_token", token, {
                  httpOnly: true,
                  secure:  true,
-                 maxAge: 1000 * 60 * 60 * 24 * 365 * 1 // 24hrs
+                 maxAge: Math.floor(Date.now() / 1000) + (60 * 60 * 24)
                })
             return {
               user: createdUser,
@@ -130,6 +138,7 @@ import userModel from "../models/user";
            if (!userFound) {
              throw new AuthenticationError('User does not exist ');
            }
+           console.log(userFound)
            if (bcrypt.compareSync(password, userFound.password)) {
              const username = userFound.username;
              const id = userFound._id;
@@ -141,8 +150,9 @@ import userModel from "../models/user";
              res
                .cookie("access_token", token, {
                  httpOnly: true,
-                 secure:  false,
-                 maxAge: 1000 * 60 * 60 * 24 * 365,  // 24hrs
+                 secure:  true,
+                 maxAge: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+                 sameSite: 'strict'
                  
                })
              return {

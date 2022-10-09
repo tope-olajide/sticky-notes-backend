@@ -17,6 +17,7 @@ export interface NexusGenInputs {
   NoteData: { // input type
     color: string; // String!
     content: string; // String!
+    isSaved?: boolean | null; // Boolean
   }
   SignInUserInput: { // input type
     password: string; // String!
@@ -50,15 +51,15 @@ export interface NexusGenObjects {
   Note: { // root type
     color: string; // String!
     content: string; // String!
-    id: string; // ID!
-    isSaved?: boolean | null; // Boolean
-    userId: string; // ID!
+    id?: string | null; // String
+    isSaved: boolean; // Boolean!
+    userId: string; // String!
   }
   Query: {};
   User: { // root type
-    _id: string; // ID!
     email: string; // String!
     fullname: string; // String!
+    id: string; // String!
     password: string; // String!
     username: string; // String!
   }
@@ -90,18 +91,18 @@ export interface NexusGenFieldTypes {
   Note: { // field return type
     color: string; // String!
     content: string; // String!
-    id: string; // ID!
-    isSaved: boolean | null; // Boolean
-    userId: string; // ID!
+    id: string | null; // String
+    isSaved: boolean; // Boolean!
+    userId: string; // String!
   }
   Query: { // field return type
     allNotes: Array<NexusGenRootTypes['Note'] | null>; // [Note]!
     singleNote: NexusGenRootTypes['Note']; // Note!
   }
   User: { // field return type
-    _id: string; // ID!
     email: string; // String!
     fullname: string; // String!
+    id: string; // String!
     password: string; // String!
     username: string; // String!
   }
@@ -123,18 +124,18 @@ export interface NexusGenFieldTypeNames {
   Note: { // field return type name
     color: 'String'
     content: 'String'
-    id: 'ID'
+    id: 'String'
     isSaved: 'Boolean'
-    userId: 'ID'
+    userId: 'String'
   }
   Query: { // field return type name
     allNotes: 'Note'
     singleNote: 'Note'
   }
   User: { // field return type name
-    _id: 'ID'
     email: 'String'
     fullname: 'String'
+    id: 'String'
     password: 'String'
     username: 'String'
   }
@@ -143,7 +144,7 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     deleteNote: { // args
-      noteId?: string | null; // ID
+      noteId: string; // String!
     }
     modifyNote: { // args
       data: NexusGenInputs['NoteData']; // NoteData!

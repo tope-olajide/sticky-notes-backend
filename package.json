@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "ts-node --transpile-only src/schema.ts",
-    "dev": "ts-node-dev --transpile-only --no-notify --exit-child src/index.ts"
+    "dev": "ts-node-dev --transpile-only --no-notify --exit-child src/index.ts",
+    "build": "npm run generate && tsc",
+    "start": "node dist/src/index.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +31,7 @@
   },
   "dependencies": {
     "apollo-server-core": "^3.10.1",
-    "apollo-server-express": "^3.10.1",
+    "apollo-server-express": "^3.10.2",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.2",
