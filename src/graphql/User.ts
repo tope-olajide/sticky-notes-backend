@@ -94,9 +94,10 @@ import userModel from "../models/user";
             );
             res
                .cookie("access_token", token, {
-                 httpOnly: true,
-                 secure:  true,
-                 maxAge: Math.floor(Date.now() / 1000) + (60 * 60 * 24)
+                httpOnly: true,
+                secure:  true,
+                maxAge: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+                sameSite: 'none'
                })
             return {
               user: createdUser,
@@ -145,7 +146,7 @@ import userModel from "../models/user";
                  httpOnly: true,
                  secure:  true,
                  maxAge: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
-                 sameSite: 'strict'
+                 sameSite: 'none'
                  
                })
              return {
