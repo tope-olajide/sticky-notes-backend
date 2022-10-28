@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
-import { AuthenticationError } from "apollo-server-express";
+import {GraphQLError }  from "graphql"
 import validator from 'validator';
 import { extendType, objectType, inputObjectType, nonNull } from "nexus";
 import userModel from "../models/user";
@@ -54,16 +54,37 @@ import userModel from "../models/user";
           const { data: { email, username, password, fullname } } = args;
   
           if (!validator.isEmail(email)) {
-            throw new AuthenticationError('Please enter a valid E-mail!')
+            throw new GraphQLError('Please enter a valid E-mail!', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+                http: { status: 401 },
+              }
+            });
           }
           if (!validator.isLength(password, { min: 5 })) {
-            throw new AuthenticationError('Password must have atleast 5 characters')
+            
+            throw new GraphQLError('Password must have atleast 5 characters', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+                http: { status: 401 },
+              }
+            });
           }
           if (!validator.isLength(username, { min: 3 })) {
-            throw new AuthenticationError('username must have at least 3 characters')
+            throw new GraphQLError('username must have at least 3 characters', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+                http: { status: 401 },
+              }
+            });
           }
           if (!validator.isLength(fullname, { min: 4 })) {
-            throw new AuthenticationError('fullname have atleast 4 characters')
+            throw new GraphQLError('fullname have atleast 4 characters', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+                http: { status: 401 },
+              }
+            });
           }
   
           const encryptedPassword = bcrypt.hashSync(password, 10);
@@ -76,11 +97,21 @@ import userModel from "../models/user";
           try {
             const usernameExist = await userModel.findOne({ username: username.toLowerCase() });
             if (usernameExist) {
-              throw new AuthenticationError("Username is already in use!");
+              throw new GraphQLError('Username is already in use!', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: { status: 401 },
+                }
+              });
             }
             const emailExist = await userModel.findOne({ email: email.toLowerCase() });
             if (emailExist) {
-              throw new AuthenticationError("Email is already in use!");
+              throw new GraphQLError('Email is already in use!', {
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  http: { status: 401 },
+                }
+              });
             }
             const createdUser = await userModel.create(userData);
             console.log(createdUser)
@@ -130,9 +161,13 @@ import userModel from "../models/user";
              { username: usernameOrEmail.toLowerCase() }],
            }).exec();
            if (!userFound) {
-             throw new AuthenticationError('User does not exist ');
+             throw new GraphQLError('You are not authenticatedUser does not exist', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+                http: { status: 401 },
+              }
+            });
            }
-           console.log(userFound)
            if (bcrypt.compareSync(password, userFound.password)) {
              const username = userFound.username;
              const id = userFound._id;
@@ -154,10 +189,20 @@ import userModel from "../models/user";
                token,
              };
            }
-           throw new AuthenticationError('Incorrect password');
+           throw new GraphQLError('Incorrect password', {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+              http: { status: 401 },
+            }
+          });
          }
          catch (error: any) {
-           throw new AuthenticationError(error);
+           throw new GraphQLError(error, {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+              http: { status: 401 },
+            }
+          });
          }
        }
      })
