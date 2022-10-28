@@ -1,6 +1,6 @@
 import { extendType, objectType, inputObjectType, nonNull } from "nexus";
 import noteModel from './../models/note';
-import { AuthenticationError } from "apollo-server-express";
+import {GraphQLError }  from "graphql"
 
 const Note = objectType({
     name: "Note",
@@ -28,9 +28,14 @@ export const AllNotes = extendType({
                 try {
                     const { user } = context;
                     if (!user) {
-                        throw new AuthenticationError("You are not authenticated");
+                        throw new GraphQLError('You are not authenticated', {
+                            extensions: {
+                              code: 'UNAUTHENTICATED',
+                              http: { status: 401 },
+                            }
+                          });
+                          
                     }
-                    console.log({ user })
                     const notes = await noteModel.find(
                         {
                             userId: user.id,
@@ -59,7 +64,12 @@ export const SingleNote = extendType({
                 const { noteId } = args;
                 const { user } = context;
                 if (!user) {
-                    throw new AuthenticationError("You are not authenticated");
+                    throw new GraphQLError('You are not authenticated', {
+                        extensions: {
+                          code: 'UNAUTHENTICATED',
+                          http: { status: 401 },
+                        }
+                      });
                 }
                 try {
                     const noteDetails = await noteModel.findOne({ _id: noteId });
@@ -89,7 +99,12 @@ export const NewNote = extendType({
                 const { user } = context;
                 try {
                     if (!user) {
-                        throw new AuthenticationError("You are not authenticated")
+                        throw new GraphQLError('You are not authenticated', {
+                            extensions: {
+                              code: 'UNAUTHENTICATED',
+                              http: { status: 401 },
+                            }
+                          });
                     }
                     const createdNoted = await noteModel.create({
                         content: data.content, color: data.color || 'yellow', userId: user.id
@@ -116,7 +131,12 @@ export const ModifyNote = extendType({
                 const { noteId, data: { content, color } } = args;
                 const { user } = context;
                 if (!user) {
-                    throw new AuthenticationError("You are not authenticated");
+                    throw new GraphQLError('You are not authenticated', {
+                        extensions: {
+                          code: 'UNAUTHENTICATED',
+                          http: { status: 401 },
+                        }
+                      });
                 }
                 try {
                     const modifiedNote = await noteModel.findOneAndUpdate(
@@ -154,7 +174,12 @@ export const DeleteNote = extendType({
                 const { noteId } = args;
                 const { user } = context;
                 if (!user) {
-                    throw new AuthenticationError("You are not authenticated");
+                    throw new GraphQLError('You are not authenticated', {
+                        extensions: {
+                          code: 'UNAUTHENTICATED',
+                          http: { status: 401 },
+                        }
+                      });
                 }
                 try {
                     const deletedNote = await noteModel.findOneAndDelete({

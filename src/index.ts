@@ -1,14 +1,18 @@
-import express, { Response } from "express";
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginDrainHttpServer, AuthenticationError } from 'apollo-server-core';
+import express, {Request, Response } from "express";
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServer } from '@apollo/server';
 import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
+
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
 import { schema } from "./schema";
 import mongoose from 'mongoose';
 import jsonwebtoken from 'jsonwebtoken'
-require('dotenv').config()
 import cors from 'cors';
 import cookieParser from "cookie-parser";
+import { json } from 'body-parser';
+
+require('dotenv').config()
 
 
 const getUser = (token: string, res: Response) => {
@@ -26,43 +30,47 @@ const getUser = (token: string, res: Response) => {
 
 async function startApolloServer() {
   const app = express();
-  app.use(cookieParser());
 
-  const corsOptions = {
+   const corsOptions = {
     origin: process.env.FRONTEND_URL!,
     credentials: true,
   };
 
-  app.use(cors(corsOptions));
+
   const httpServer = http.createServer(app);
+
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     cache: new InMemoryLRUCache(),
-    context: ({ req, res }) => {
-      if (req) {
-        console.log(req.cookies)
-        const token = req.cookies.access_token || ""
-        const user = getUser(token, res);
-        console.log({ user })
-        return {
-          user,
-          res
-        };
-      }
-      return {
-        res
-      }
-    }
   });
 
-
-
   await server.start();
-  server.applyMiddleware({ app, cors: false });
-  const port = process.env.PORT || 4000;
-  await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
-  console.log(`🚀 Server ready at http://localhost:${port + server.graphqlPath}`);
+  app.use(
+    '/graphql',
+    cors(corsOptions),
+    json(),
+    cookieParser(),
+    expressMiddleware(server, {
+      context: async ({ req, res }:{req:Request, res:Response})=> {
+        if (req) {
+          console.log(req.cookies)
+          const token = req.cookies.access_token || ""
+          const user = getUser(token, res);
+          console.log({ user })
+          return {
+            user,
+            res
+          };
+        }
+        return {
+          res
+        }
+      }
+    }),
+  );
+  await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, resolve));
+  console.log(`🚀 Server ready at http://localhost:4000/graphql`);
 
 }
 async function connectToMongoDB() {
