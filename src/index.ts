@@ -1,7 +1,6 @@
 import express, {Request, Response } from "express";
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServer } from '@apollo/server';
-import { InMemoryLRUCache } from '@apollo/utils.keyvaluecache';
 
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
@@ -42,8 +41,7 @@ async function startApolloServer() {
 
   const server = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    cache: new InMemoryLRUCache(),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
   });
 
   await server.start();
